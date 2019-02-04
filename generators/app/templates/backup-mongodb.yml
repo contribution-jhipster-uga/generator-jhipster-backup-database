@@ -1,0 +1,26 @@
+version: '2'
+services:
+    jhipster-mongodb:
+        container_name : jhipster-mongodb
+        image: mongo:4.0.2
+        ports:
+            - "27017:27017"
+        # volumes:
+        #     - ~/volumes/jhipster/jhipster/mongodb/:/data/db/
+
+    mongodbbackup:
+        user: "0"
+        image: 'tutum/mongodb-backup:latest'
+        links:
+          - jhipster-mongodb
+        environment:
+          - MONGODB_HOST=jhipster-mongodb
+          - MONGODB_PORT=27017
+          - MONGODB_USER=
+          - MONGODB_PASS=
+          - MONGODB_DB=
+          - CRON_TIME=1 * * * * #Change backup timer
+          - MAX_BACKUPS=10 #Change number max of backup
+          - INIT_BACKUP=yes #Initial backup
+        volumes:
+          - ./backup:/backup #Change to the host folder where you want to store the backups
