@@ -41,8 +41,8 @@ module.exports = class extends BaseGenerator {
             {
                 type: 'input',
                 name: 'message',
-                message: 'Please put something',
-                default: 'hello world!'
+                message: 'How often do you want to back up your database? (Please use the CRON format)',
+                default: '00***'
             }
         ];
 
@@ -106,7 +106,24 @@ module.exports = class extends BaseGenerator {
 
         this.log('------\n');
 
-        this.template('fifi.yml',`src/main/docker/fifi.yml`)
+	var database = ''
+	var fs = require('fs');
+  var content = fs.readFileSync('.yo-rc.json');
+  var contentArray = JSON.parse(content);
+  database = contentArray['generator-jhipster'].prodDatabaseType;
+  this.log(database);
+	switch(database){
+	  case 'mysql': this.log(database);
+     			this.template('fifi.yml',`src/main/docker/fifi.yml`)
+			break;
+	  case 'postgresql': this.log(database);
+     			this.template('fifi.yml',`src/main/docker/fifi.yml`)
+			break;
+    case 'mongodb': this.log(database);
+       		this.template('fifi.yml',`src/main/docker/fifi.yml`)
+  		break;
+	  default: this.log('Your database is not supported yet :( !');
+	}
 
         if (this.clientFramework === 'angular1') {
             this.template('dummy.txt', 'dummy-angular1.txt');
