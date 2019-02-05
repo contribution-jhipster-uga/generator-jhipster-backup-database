@@ -61,7 +61,7 @@ module.exports = class extends BaseGenerator {
         database = contentArray['generator-jhipster'].prodDatabaseType;
         this.log(database);
 
-        if(database=='mysql'){
+        if(database=='mysql' || database=='mariadb'){
           const done = this.async();
           this.prompt(promptsql).then((props) => {
               this.props = props;
@@ -202,14 +202,37 @@ module.exports = class extends BaseGenerator {
             needle: '- INIT_BACKUP=yes',
             splicable: [`- CRON_TIME=${this.message}`]
           }, this);
-          
+
           jhipsterUtils.rewriteFile({
             file: 'src/main/docker/backup-mongodb.yml',
             needle: '- MONGODB_PORT=27017',
             splicable: [`- MONGODB_HOST=${appName}`]
           }, this);
   		break;
-	  default: this.log('Your database is not supported yet :( !');
+      case 'mariadb': this.log(database);
+            var appName = this.baseName.toLowerCase() + '-mariadb';
+            this.template('backup-mysql.yml',`src/main/docker/backup-mariadb.yml`);
+            jhipsterUtils.rewriteFile({
+              file: 'src/main/docker/backup-mariadb.yml',
+              needle: 'environment:',
+              splicable: [`container_name: ${appName}`]
+            }, this);
+
+            jhipsterUtils.rewriteFile({
+              file: 'src/main/docker/backup-mariadb.yml',
+              needle: '- DB_DUMP_BEGIN=+0',
+              splicable: [`- DB_SERVER=${appName}`]
+            }, this);
+
+            jhipsterUtils.rewriteFile({
+              file: 'src/main/docker/backup-mariadb.yml',
+              needle: '- DB_DUMP_BEGIN=+0',
+              splicable: [`- DB_DUMP_FREQ=${this.message}`]
+            }, this);
+
+        break;
+	  default: this.warnig(`\n Your database is not supported yet ! :(`);
+
 	}
 
         if (this.clientFramework === 'angular1') {
