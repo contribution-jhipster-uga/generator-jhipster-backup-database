@@ -1,6 +1,6 @@
 {
   "name": "generator-jhipster-database-backup",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "This module allows you to generate .yml files allowing you to make periodic backups of your production database. For the moment : MYSQL, POSTGRESQL, MONGODB and MARIADB are supported.",
   "keywords": [
     "yeoman-generator",
@@ -22,7 +22,7 @@
     "url": "git+https://github.com/contribution-jhipster-uga/generator-jhipster-backup-database"
   },
   "dependencies": {
-    "chalk": "2.4.1",
+    "chalk": "^2.4.1",
     "fs": "0.0.1-security",
     "generator-jhipster": ">=5.0.0",
     "line-reader": "^0.4.0",

@@ -97,7 +97,7 @@ MIT © [Contribution JHipster UGA](https://github.com/contribution-jhipster-uga/
 
 [npm-image]: https://img.shields.io/npm/v/generator-jhipster-database-backup.svg
 [npm-url]: https://npmjs.org/package/generator-jhipster-database-backup
-[travis-image]: https://travis-ci.org/bastien-7/generator-jhipster-database-backup.svg?branch=master
-[travis-url]: https://travis-ci.org/bastien-7/generator-jhipster-database-backup
-[daviddm-image]: https://david-dm.org/bastien-7/generator-jhipster-database-backup.svg?theme=shields.io
-[daviddm-url]: https://david-dm.org/bastien-7/generator-jhipster-database-backup
+[travis-image]: https://travis-ci.org/contribution-jhipster-uga/generator-jhipster-database-backup.svg?branch=master
+[travis-url]: https://travis-ci.org/contribution-jhipster-uga/generator-jhipster-database-backup
+[daviddm-image]: https://david-dm.org/contribution-jhipster-uga/generator-jhipster-database-backup.svg?theme=shields.io
+[daviddm-url]: https://david-dm.org/contribution-jhipster-uga/generator-jhipster-database-backup

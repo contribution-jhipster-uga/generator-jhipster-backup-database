@@ -1,10 +1,10 @@
 {
   "generator-jhipster-module": {
     "promptValues": {
-      "githubName": "bastien-7",
-      "authorName": "TERRIER Bastien",
+      "githubName": "contribution-jhipster-uga",
+      "authorName": "Contribution Jhipster UGA",
       "authorEmail": "contribution.jhipster.uga@gmail.com",
-      "authorUrl": ""
+      "authorUrl": "https://github.com/contribution-jhipster-uga"
     }
   }
 }
