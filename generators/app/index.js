@@ -194,7 +194,20 @@ module.exports = class extends BaseGenerator {
           }, this);
 			break;
     case 'mongodb': this.log(database);
-       		this.template('fifi.yml',`src/main/docker/fifi.yml`);
+       		this.template('backup-mongodb.yml',`src/main/docker/backup-mongodb.yml`);
+          var appName = this.baseName.toLowerCase() + '-mongodb';
+
+          jhipsterUtils.rewriteFile({
+            file: 'src/main/docker/backup-mongodb.yml',
+            needle: '- INIT_BACKUP=yes',
+            splicable: [`- CRON_TIME=${this.message}`]
+          }, this);
+          
+          jhipsterUtils.rewriteFile({
+            file: 'src/main/docker/backup-mongodb.yml',
+            needle: '- MONGODB_PORT=27017',
+            splicable: [`- MONGODB_HOST=${appName}`]
+          }, this);
   		break;
 	  default: this.log('Your database is not supported yet :( !');
 	}

@@ -1,16 +1,9 @@
 version: '2'
 services:
-  user: "0"
     mongodbbackup:
         image: 'tutum/mongodb-backup:latest'
         environment:
-          - MONGODB_HOST=jhipster-mongodb #Name of the DB Container
-          - MONGODB_PORT=27017 # MongoDB database's port
-          - MONGODB_USER=
-          - MONGODB_PASS=
-          - MONGODB_DB=  # The database name to dump. If not specified, it will dump all the databases
-          - CRON_TIME=1 * * * * #Change backup timer
-          - MAX_BACKUPS=10 #Change number max of backup
-          - INIT_BACKUP=yes #Initial backup
+          - MONGODB_PORT=27017
+          - INIT_BACKUP=yes
         volumes:
-          - ./backup:/backup #Change to the host folder where you want to store the backups
+          - ./backup:/backup
