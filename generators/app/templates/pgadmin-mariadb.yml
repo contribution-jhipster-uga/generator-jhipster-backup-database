@@ -1,0 +1,25 @@
+version: '2'
+services:
+    mariadb-mariadb:
+        image: mariadb:10.3.7
+        # volumes:
+        #     - ~/volumes/jhipster/mariadb/mysql/:/var/lib/mysql/
+        environment:
+            - MYSQL_USER=root
+            - MYSQL_ROOT_PASSWORD=test
+            - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+            - MYSQL_DATABASE=mariadb
+        ports:
+            - 3306:3306
+        command: mysqld --lower_case_table_names=1 --skip-ssl --character_set_server=utf8mb4 --explicit_defaults_for_timestamp
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        container_name: sf4_phpmyadmin
+        depends_on:
+            - mariadb-mariadb
+        ports:
+            - 8080:80
+        links:
+            - mariadb-mariadb
+        environment:
+            PMA_HOSTS: mariadb-mariadb
