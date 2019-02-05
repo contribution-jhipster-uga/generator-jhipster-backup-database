@@ -1,0 +1,11 @@
+version: '2'
+services:
+  postgres-backup:
+    image: contributionjhipster/docker-pg_dump
+    environment:
+      - PGUSER=postgres
+      - CRON_SCHEDULE=* * * * *
+      - PGHOST=postgre-postgresql
+    volumes:
+      - ./backup:/dump
+    command: dump-cron
