@@ -1,24 +1,14 @@
 version: '2'
 services:
-    jhipster-mongodb:
-        container_name : jhipster-mongodb
-        image: mongo:4.0.2
-        ports:
-            - "27017:27017"
-        # volumes:
-        #     - ~/volumes/jhipster/jhipster/mongodb/:/data/db/
-
+  user: "0"
     mongodbbackup:
-        user: "0"
         image: 'tutum/mongodb-backup:latest'
-        links:
-          - jhipster-mongodb
         environment:
-          - MONGODB_HOST=jhipster-mongodb
-          - MONGODB_PORT=27017
+          - MONGODB_HOST=jhipster-mongodb #Name of the DB Container
+          - MONGODB_PORT=27017 # MongoDB database's port
           - MONGODB_USER=
           - MONGODB_PASS=
-          - MONGODB_DB=
+          - MONGODB_DB=  # The database name to dump. If not specified, it will dump all the databases
           - CRON_TIME=1 * * * * #Change backup timer
           - MAX_BACKUPS=10 #Change number max of backup
           - INIT_BACKUP=yes #Initial backup
