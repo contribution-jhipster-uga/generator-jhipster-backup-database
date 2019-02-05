@@ -3,6 +3,7 @@ const packagejs = require('../../package.json');
 const semver = require('semver');
 const BaseGenerator = require('generator-jhipster/generators/generator-base');
 const jhipsterConstants = require('generator-jhipster/generators/generator-constants');
+const jhipsterUtils = require('generator-jhipster/generators/utils');
 
 module.exports = class extends BaseGenerator {
     get initializing() {
@@ -45,14 +46,39 @@ module.exports = class extends BaseGenerator {
                 default: '00***'
             }
         ];
+        const promptsql = [
+            {
+                type: 'input',
+                name: 'message',
+                message: 'How often do you want to back up your database? (in minutes, starting from now)',
+                default: '60'
+            }
+        ];
+        var database = ''
+        var fs = require('fs');
+        var content = fs.readFileSync('.yo-rc.json');
+        var contentArray = JSON.parse(content);
+        database = contentArray['generator-jhipster'].prodDatabaseType;
+        this.log(database);
 
-        const done = this.async();
-        this.prompt(prompts).then((props) => {
-            this.props = props;
-            // To access props later use this.props.someOption;
+        if(database=='mysql'){
+          const done = this.async();
+          this.prompt(promptsql).then((props) => {
+              this.props = props;
+              // To access props later use this.props.someOption;
 
-            done();
-        });
+              done();
+          });
+        }else{
+          const done = this.async();
+          this.prompt(prompts).then((props) => {
+              this.props = props;
+              // To access props later use this.props.someOption;
+
+              done();
+          });
+        }
+
     }
 
     writing() {
@@ -81,46 +107,73 @@ module.exports = class extends BaseGenerator {
         const resourceDir = jhipsterConstants.SERVER_MAIN_RES_DIR;
         const webappDir = jhipsterConstants.CLIENT_MAIN_SRC_DIR;
 
+        var database = ''
+      	var fs = require('fs');
+        var content = fs.readFileSync('.yo-rc.json');
+        var contentArray = JSON.parse(content);
+        database = contentArray['generator-jhipster'].prodDatabaseType;
+        this.log(database);
+
         // variable from questions
         this.message = this.props.message;
 
+
+
         // show all variables
-        this.log('\n--- some config read from config ---');
-        this.log(`baseName=${this.baseName}`);
-        this.log(`packageName=${this.packageName}`);
-        this.log(`clientFramework=${this.clientFramework}`);
-        this.log(`clientPackageManager=${this.clientPackageManager}`);
-        this.log(`buildTool=${this.buildTool}`);
+        // this.log('\n--- some config read from config ---');
+        // this.log(`baseName=${this.baseName}`);
+        // this.log(`packageName=${this.packageName}`);
+        // this.log(`clientFramework=${this.clientFramework}`);
+        // this.log(`clientPackageManager=${this.clientPackageManager}`);
+        // this.log(`buildTool=${this.buildTool}`);
+        //
+        // this.log('\n--- some function ---');
+        // this.log(`angularAppName=${this.angularAppName}`);
+        //
+        // this.log('\n--- some const ---');
+        // this.log(`javaDir=${javaDir}`);
+        // this.log(`resourceDir=${resourceDir}`);
+        // this.log(`webappDir=${webappDir}`);
+        //
+        // this.log('\n--- variables from questions ---');
+        // this.log(`\nmessage=${this.message}`);
+        // this.log(`\nAppConfig=${this.angularAppName}`);
+        //
+        // this.log('------\n');
 
-        this.log('\n--- some function ---');
-        this.log(`angularAppName=${this.angularAppName}`);
 
-        this.log('\n--- some const ---');
-        this.log(`javaDir=${javaDir}`);
-        this.log(`resourceDir=${resourceDir}`);
-        this.log(`webappDir=${webappDir}`);
 
-        this.log('\n--- variables from questions ---');
-        this.log(`\nmessage=${this.message}`);
-        this.log(`\nAppConfig=${this.angularAppName}`);
 
-        this.log('------\n');
 
-	var database = ''
-	var fs = require('fs');
-  var content = fs.readFileSync('.yo-rc.json');
-  var contentArray = JSON.parse(content);
-  database = contentArray['generator-jhipster'].prodDatabaseType;
-  this.log(database);
+
 	switch(database){
 	  case 'mysql': this.log(database);
-     			this.template('fifi.yml',`src/main/docker/fifi.yml`)
+          var appName = this.baseName.toLowerCase() + '-mysql';
+     			this.template('backup-mysql.yml',`src/main/docker/backup-mysql.yml`);
+          jhipsterUtils.rewriteFile({
+            file: 'src/main/docker/backup-mysql.yml',
+            needle: 'environment:',
+            splicable: [`container_name: ${appName}`]
+          }, this);
+
+          jhipsterUtils.rewriteFile({
+            file: 'src/main/docker/backup-mysql.yml',
+            needle: '- DB_DUMP_BEGIN=+0',
+            splicable: [`- DB_SERVER=${appName}`]
+          }, this);
+
+          jhipsterUtils.rewriteFile({
+            file: 'src/main/docker/backup-mysql.yml',
+            needle: '- DB_DUMP_BEGIN=+0',
+            splicable: [`- DB_DUMP_FREQ=${this.message}`]
+          }, this);
+
 			break;
 	  case 'postgresql': this.log(database);
-     			this.template('fifi.yml',`src/main/docker/fifi.yml`)
+     			this.template('fifi.yml',`src/main/docker/fifi.yml`);
 			break;
     case 'mongodb': this.log(database);
-       		this.template('fifi.yml',`src/main/docker/fifi.yml`)
+       		this.template('fifi.yml',`src/main/docker/fifi.yml`);
   		break;
 	  default: this.log('Your database is not supported yet :( !');
 	}

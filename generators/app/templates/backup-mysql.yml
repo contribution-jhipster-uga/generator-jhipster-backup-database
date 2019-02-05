@@ -1,30 +1,12 @@
 version: '2'
 services:
-    test-mysql:
-        image: mysql:5.7.20
-        container_name: test-mysql
-        # volumes:
-        #     - ~/volumes/jhipster/test/mysql/:/var/lib/mysql/
-        environment:
-            - MYSQL_USER=root
-            - MYSQL_ROOT_PASSWORD=root
-            - MYSQL_DATABASE=test
-        ports:
-            - 3306:3306
-        command: mysqld --lower_case_table_names=1 --skip-ssl --character_set_server=utf8mb4 --explicit_defaults_for_timestamp
     mysql-backup:
       user: "0"
       image: deitch/mysql-backup
-      container_name: mysql-backup
-      links:
-       - test-mysql # Maps postgres as "db"
       environment:
        - DB_DUMP_TARGET=/backup
        - DB_USER=root
-       - DB_PASS=root
-       - DB_DUMP_FREQ=1
        - DB_DUMP_BEGIN=+0
-       - DB_SERVER=test-mysql
       volumes:
-        - ./backup:/backup
+       - ./backup:/backup
       restart: always
