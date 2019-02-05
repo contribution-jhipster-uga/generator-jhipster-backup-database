@@ -43,7 +43,7 @@ module.exports = class extends BaseGenerator {
                 type: 'input',
                 name: 'message',
                 message: 'How often do you want to back up your database? (Please use the CRON format)',
-                default: '00***'
+                default: '0 0 * * *'
             }
         ];
         const promptsql = [
@@ -170,7 +170,28 @@ module.exports = class extends BaseGenerator {
 
 			break;
 	  case 'postgresql': this.log(database);
-     			this.template('fifi.yml',`src/main/docker/fifi.yml`);
+          var appName = this.baseName.toLowerCase() + '-postgresql';
+          var appNameUpper = this.baseName;
+
+     			this.template('backup-postgresql.yml',`src/main/docker/backup-postgresql.yml`);
+
+          jhipsterUtils.rewriteFile({
+            file: 'src/main/docker/backup-postgresql.yml',
+            needle: '- PGPORT=5432',
+            splicable: [`- PGHOST=${appName}`]
+          }, this);
+
+          jhipsterUtils.rewriteFile({
+            file: 'src/main/docker/backup-postgresql.yml',
+            needle: '- PGPORT=5432',
+            splicable: [`- PUSER=${appNameUpper}`]
+          }, this);
+
+          jhipsterUtils.rewriteFile({
+            file: 'src/main/docker/backup-postgresql.yml',
+            needle: '- PGPORT=5432',
+            splicable: [`- CRON_SCHEDULE=${this.message}`]
+          }, this);
 			break;
     case 'mongodb': this.log(database);
        		this.template('fifi.yml',`src/main/docker/fifi.yml`);
@@ -179,16 +200,16 @@ module.exports = class extends BaseGenerator {
 	}
 
         if (this.clientFramework === 'angular1') {
-            this.template('dummy.txt', 'dummy-angular1.txt');
+            // this.template('dummy.txt', 'dummy-angular1.txt');
         }
         if (this.clientFramework === 'angularX' || this.clientFramework === 'angular2') {
-            this.template('dummy.txt', 'dummy-angularX.txt');
+            // this.template('dummy.txt', 'dummy-angularX.txt');
         }
         if (this.buildTool === 'maven') {
-            this.template('dummy.txt', 'dummy-maven.txt');
+            // this.template('dummy.txt', 'dummy-maven.txt');
         }
         if (this.buildTool === 'gradle') {
-            this.template('dummy.txt', 'dummy-gradle.txt');
+            // this.template('dummy.txt', 'dummy-gradle.txt');
         }
     }
 

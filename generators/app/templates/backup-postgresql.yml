@@ -3,9 +3,7 @@ services:
   postgres-backup:
     image: contributionjhipster/docker-pg_dump
     environment:
-      - PGUSER=postgres
-      - CRON_SCHEDULE=* * * * *
-      - PGHOST=postgre-postgresql
+      - PGPORT=5432
     volumes:
       - ./backup:/dump
     command: dump-cron
