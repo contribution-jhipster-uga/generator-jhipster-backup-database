@@ -6,7 +6,6 @@ services:
       environment:
        - DB_DUMP_TARGET=/backup
        - DB_USER=root
-       - DB_DUMP_BEGIN=+0
       volumes:
        - ./backup:/backup
       restart: always

@@ -9,9 +9,9 @@
   ],
   "homepage": "https://github.com/contribution-jhipster-uga/generator-jhipster-backup-database",
   "author": {
-    "name": "Contribution Jhipster UGA, COURTIAL, GROS-DAILLON, LAFRASSE, TERRIER (https://github.com/contribution-jhipster-uga/)",
+    "name": "Contribution Jhipster UGA, Julien COURTIAL, Hugo GROS-DAILLON, Cédric LAFRASSE, Bastien TERRIER (https://github.com/contribution-jhipster-uga/)",
     "email": "contribution.jhipster.uga@gmail.com",
-    "url": ""
+    "url": "https://github.com/contribution-jhipster-uga"
   },
   "files": [
     "generators"

@@ -12,6 +12,8 @@ The results will be .sql or .targz saves in a backup directory.
 As this is a [JHipster](http://jhipster.github.io/) module, we expect you have JHipster and its related tools already installed:
 
 - [Installing JHipster](https://jhipster.github.io/installation.html)
+- [Installing Docker](https://docs.docker.com/install/)
+- [Installing Docker-compose](https://docs.docker.com/compose/install/)
 
 # Installation
 

@@ -38,52 +38,28 @@ module.exports = class extends BaseGenerator {
     }
 
     prompting() {
-        const prompts = [
-            {
-                type: 'input',
-                name: 'message',
-                message: 'How often do you want to back up your database? (Please use the CRON format)',
-                default: '0 0 * * *'
-            }
-        ];
-        const promptsql = [
-            {
-                type: 'input',
-                name: 'message',
-                message: 'How often do you want to back up your database? (in minutes, starting from now)',
-                default: '60'
-            }
-        ];
-        var database = ''
-        var fs = require('fs');
-        var content = fs.readFileSync('.yo-rc.json');
-        var contentArray = JSON.parse(content);
-        database = contentArray['generator-jhipster'].prodDatabaseType;
-        this.log(database);
+        const prompts = [{
+            type: 'input',
+            name: 'message',
+            message: 'How often do you want to back up your database? (Please use the CRON format)',
+            default: '0 0 * * *'
+        }];
+        var database = this.jhipsterAppConfig.prodDatabaseType;
 
-        if(database=='mysql' || database=='mariadb'){
-          const done = this.async();
-          this.prompt(promptsql).then((props) => {
-              this.props = props;
-              // To access props later use this.props.someOption;
+        const done = this.async();
+        this.prompt(prompts).then((props) => {
+            this.props = props;
+            // To access props later use this.props.someOption;
 
-              done();
-          });
-        }else{
-          const done = this.async();
-          this.prompt(prompts).then((props) => {
-              this.props = props;
-              // To access props later use this.props.someOption;
+            done();
+        });
 
-              done();
-          });
-        }
 
     }
 
     writing() {
         // function to use directly template
-        this.template = function (source, destination) {
+        this.template = function(source, destination) {
             this.fs.copyTpl(
                 this.templatePath(source),
                 this.destinationPath(destination),
@@ -93,160 +69,95 @@ module.exports = class extends BaseGenerator {
 
         // read config from .yo-rc.json
         this.baseName = this.jhipsterAppConfig.baseName;
-        this.packageName = this.jhipsterAppConfig.packageName;
-        this.packageFolder = this.jhipsterAppConfig.packageFolder;
-        this.clientFramework = this.jhipsterAppConfig.clientFramework;
-        this.clientPackageManager = this.jhipsterAppConfig.clientPackageManager;
-        this.buildTool = this.jhipsterAppConfig.buildTool;
 
         // use function in generator-base.js from generator-jhipster
         this.angularAppName = this.getAngularAppName();
 
-        // use constants from generator-constants.js
-        const javaDir = `${jhipsterConstants.SERVER_MAIN_SRC_DIR + this.packageFolder}/`;
-        const resourceDir = jhipsterConstants.SERVER_MAIN_RES_DIR;
-        const webappDir = jhipsterConstants.CLIENT_MAIN_SRC_DIR;
-
-        var database = ''
-      	var fs = require('fs');
-        var content = fs.readFileSync('.yo-rc.json');
-        var contentArray = JSON.parse(content);
-        database = contentArray['generator-jhipster'].prodDatabaseType;
-        this.log(database);
+        var database = this.jhipsterAppConfig.prodDatabaseType;
 
         // variable from questions
         this.message = this.props.message;
 
 
+        switch (database) {
+            case 'mysql':
+                var appName = this.baseName.toLowerCase() + '-mysql';
+                this.template('backup-mysql.yml', jhipsterConstants.DOCKER_DIR + `backup-mysql.yml`);
+                jhipsterUtils.rewriteFile({
+                    file: jhipsterConstants.DOCKER_DIR + 'backup-mysql.yml',
+                    needle: 'volumes:',
+                    splicable: [`- DB_SERVER=${appName}`]
+                }, this);
 
-        // show all variables
-        // this.log('\n--- some config read from config ---');
-        // this.log(`baseName=${this.baseName}`);
-        // this.log(`packageName=${this.packageName}`);
-        // this.log(`clientFramework=${this.clientFramework}`);
-        // this.log(`clientPackageManager=${this.clientPackageManager}`);
-        // this.log(`buildTool=${this.buildTool}`);
-        //
-        // this.log('\n--- some function ---');
-        // this.log(`angularAppName=${this.angularAppName}`);
-        //
-        // this.log('\n--- some const ---');
-        // this.log(`javaDir=${javaDir}`);
-        // this.log(`resourceDir=${resourceDir}`);
-        // this.log(`webappDir=${webappDir}`);
-        //
-        // this.log('\n--- variables from questions ---');
-        // this.log(`\nmessage=${this.message}`);
-        // this.log(`\nAppConfig=${this.angularAppName}`);
-        //
-        // this.log('------\n');
+                jhipsterUtils.rewriteFile({
+                    file: jhipsterConstants.DOCKER_DIR + 'backup-mysql.yml',
+                    needle: 'volumes:',
+                    splicable: [`- DB_DUMP_CRON=${this.message}`]
+                }, this);
 
+                break;
+            case 'postgresql':
+                var appName = this.baseName.toLowerCase() + '-postgresql';
+                var appNameUpper = this.baseName;
 
+                this.template('backup-postgresql.yml', jhipsterConstants.DOCKER_DIR + `backup-postgresql.yml`);
 
+                jhipsterUtils.rewriteFile({
+                    file: jhipsterConstants.DOCKER_DIR + 'backup-postgresql.yml',
+                    needle: '- PGPORT=5432',
+                    splicable: [`- PGHOST=${appName}`]
+                }, this);
 
+                jhipsterUtils.rewriteFile({
+                    file: jhipsterConstants.DOCKER_DIR + 'backup-postgresql.yml',
+                    needle: '- PGPORT=5432',
+                    splicable: [`- PUSER=${appNameUpper}`]
+                }, this);
 
+                jhipsterUtils.rewriteFile({
+                    file: jhipsterConstants.DOCKER_DIR + 'backup-postgresql.yml',
+                    needle: '- PGPORT=5432',
+                    splicable: [`- CRON_SCHEDULE=${this.message}`]
+                }, this);
+                break;
+            case 'mongodb':
+                this.template('backup-mongodb.yml', jhipsterConstants.DOCKER_DIR + `backup-mongodb.yml`);
+                var appName = this.baseName.toLowerCase() + '-mongodb';
 
-	switch(database){
-	  case 'mysql': this.log(database);
-          var appName = this.baseName.toLowerCase() + '-mysql';
-     			this.template('backup-mysql.yml',`src/main/docker/backup-mysql.yml`);
-          jhipsterUtils.rewriteFile({
-            file: 'src/main/docker/backup-mysql.yml',
-            needle: 'environment:',
-            splicable: [`container_name: ${appName}`]
-          }, this);
+                jhipsterUtils.rewriteFile({
+                    file: jhipsterConstants.DOCKER_DIR + 'backup-mongodb.yml',
+                    needle: '- INIT_BACKUP=yes',
+                    splicable: [`- CRON_TIME=${this.message}`]
+                }, this);
 
-          jhipsterUtils.rewriteFile({
-            file: 'src/main/docker/backup-mysql.yml',
-            needle: '- DB_DUMP_BEGIN=+0',
-            splicable: [`- DB_SERVER=${appName}`]
-          }, this);
+                jhipsterUtils.rewriteFile({
+                    file: jhipsterConstants.DOCKER_DIR + 'backup-mongodb.yml',
+                    needle: '- MONGODB_PORT=27017',
+                    splicable: [`- MONGODB_HOST=${appName}`]
+                }, this);
+                break;
+            case 'mariadb':
+                var appName = this.baseName.toLowerCase() + '-mariadb';
+                this.template('backup-mysql.yml', jhipsterConstants.DOCKER_DIR + `backup-mariadb.yml`);
 
-          jhipsterUtils.rewriteFile({
-            file: 'src/main/docker/backup-mysql.yml',
-            needle: '- DB_DUMP_BEGIN=+0',
-            splicable: [`- DB_DUMP_FREQ=${this.message}`]
-          }, this);
+                jhipsterUtils.rewriteFile({
+                    file: jhipsterConstants.DOCKER_DIR + 'backup-mariadb.yml',
+                    needle: 'volumes:',
+                    splicable: [`- DB_SERVER=${appName}`]
+                }, this);
 
-			break;
-	  case 'postgresql': this.log(database);
-          var appName = this.baseName.toLowerCase() + '-postgresql';
-          var appNameUpper = this.baseName;
+                jhipsterUtils.rewriteFile({
+                    file: jhipsterConstants.DOCKER_DIR + 'backup-mariadb.yml',
+                    needle: 'volumes:',
+                    splicable: [`- DB_DUMP_CRON=${this.message}`]
+                }, this);
 
-     			this.template('backup-postgresql.yml',`src/main/docker/backup-postgresql.yml`);
+                break;
+            default:
+                this.warnig(`\n Your database is not supported yet ! :(`);
 
-          jhipsterUtils.rewriteFile({
-            file: 'src/main/docker/backup-postgresql.yml',
-            needle: '- PGPORT=5432',
-            splicable: [`- PGHOST=${appName}`]
-          }, this);
-
-          jhipsterUtils.rewriteFile({
-            file: 'src/main/docker/backup-postgresql.yml',
-            needle: '- PGPORT=5432',
-            splicable: [`- PUSER=${appNameUpper}`]
-          }, this);
-
-          jhipsterUtils.rewriteFile({
-            file: 'src/main/docker/backup-postgresql.yml',
-            needle: '- PGPORT=5432',
-            splicable: [`- CRON_SCHEDULE=${this.message}`]
-          }, this);
-			break;
-    case 'mongodb': this.log(database);
-       		this.template('backup-mongodb.yml',`src/main/docker/backup-mongodb.yml`);
-          var appName = this.baseName.toLowerCase() + '-mongodb';
-
-          jhipsterUtils.rewriteFile({
-            file: 'src/main/docker/backup-mongodb.yml',
-            needle: '- INIT_BACKUP=yes',
-            splicable: [`- CRON_TIME=${this.message}`]
-          }, this);
-
-          jhipsterUtils.rewriteFile({
-            file: 'src/main/docker/backup-mongodb.yml',
-            needle: '- MONGODB_PORT=27017',
-            splicable: [`- MONGODB_HOST=${appName}`]
-          }, this);
-  		break;
-      case 'mariadb': this.log(database);
-            var appName = this.baseName.toLowerCase() + '-mariadb';
-            this.template('backup-mysql.yml',`src/main/docker/backup-mariadb.yml`);
-            jhipsterUtils.rewriteFile({
-              file: 'src/main/docker/backup-mariadb.yml',
-              needle: 'environment:',
-              splicable: [`container_name: ${appName}`]
-            }, this);
-
-            jhipsterUtils.rewriteFile({
-              file: 'src/main/docker/backup-mariadb.yml',
-              needle: '- DB_DUMP_BEGIN=+0',
-              splicable: [`- DB_SERVER=${appName}`]
-            }, this);
-
-            jhipsterUtils.rewriteFile({
-              file: 'src/main/docker/backup-mariadb.yml',
-              needle: '- DB_DUMP_BEGIN=+0',
-              splicable: [`- DB_DUMP_FREQ=${this.message}`]
-            }, this);
-
-        break;
-	  default: this.warnig(`\n Your database is not supported yet ! :(`);
-
-	}
-
-        if (this.clientFramework === 'angular1') {
-            // this.template('dummy.txt', 'dummy-angular1.txt');
         }
-        if (this.clientFramework === 'angularX' || this.clientFramework === 'angular2') {
-            // this.template('dummy.txt', 'dummy-angularX.txt');
-        }
-        if (this.buildTool === 'maven') {
-            // this.template('dummy.txt', 'dummy-maven.txt');
-        }
-        if (this.buildTool === 'gradle') {
-            // this.template('dummy.txt', 'dummy-gradle.txt');
-        }
+
     }
 
     install() {

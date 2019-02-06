@@ -1,2 +1,0 @@
-hello database-backup!
-It's dummy.txt
