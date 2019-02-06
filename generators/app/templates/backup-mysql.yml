@@ -8,4 +8,3 @@ services:
        - DB_USER=root
       volumes:
        - ./backup:/backup
-      restart: always

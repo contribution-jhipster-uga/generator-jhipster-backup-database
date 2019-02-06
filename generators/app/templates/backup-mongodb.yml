@@ -1,6 +1,6 @@
 version: '2'
 services:
-    mongodbbackup:
+    mongodb-backup:
         image: 'tutum/mongodb-backup:latest'
         environment:
           - MONGODB_PORT=27017
