@@ -96,6 +96,7 @@ To find more details about the docker image and the parameters click [here]( htt
 # License
 
 MIT © [Contribution JHipster UGA](https://github.com/contribution-jhipster-uga/)
+Julien COURTIAL, Hugo GROS-DAILLON, Cédric LAFRASSE et Bastien TERRIER
 Our contribution uses the open source work of Avi Deitcher and tutumcloud.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
