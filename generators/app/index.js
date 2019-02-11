@@ -143,13 +143,13 @@ module.exports = class extends BaseGenerator {
                 jhipsterUtils.rewriteFile({
                     file: jhipsterConstants.DOCKER_DIR + 'backup-mariadb.yml',
                     needle: 'volumes:',
-                    splicable: [`- DB_SERVER=${appName}`]
+                    splicable: [` - DB_SERVER=${appName}`]
                 }, this);
 
                 jhipsterUtils.rewriteFile({
                     file: jhipsterConstants.DOCKER_DIR + 'backup-mariadb.yml',
                     needle: 'volumes:',
-                    splicable: [`- DB_DUMP_CRON=${this.message}`]
+                    splicable: [` - DB_DUMP_CRON=${this.message}`]
                 }, this);
 
                 break;

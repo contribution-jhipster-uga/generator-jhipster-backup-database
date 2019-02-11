@@ -1,11 +1,13 @@
 {
   "name": "generator-jhipster-database-backup",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "The purpose of this module is to perform periodic backups of your database. This backup docker image currently supports MYSQL, POSTGRESQL, MONGODB and MARIADB.",
   "keywords": [
     "yeoman-generator",
     "jhipster-module",
-    "jhipster-5"
+    "jhipster-5",
+    "database",
+    "backup"
   ],
   "homepage": "https://github.com/contribution-jhipster-uga/generator-jhipster-backup-database",
   "author": {
