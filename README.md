@@ -53,7 +53,7 @@ First, you have to run the generator using the following command :
 yo jhipster-database-backup
 ```
 
-Then enter the required parameter (backup frequency), don't forget the whitespace if you are using CRON (https://en.wikipedia.org/wiki/Cron).
+Then enter the required parameter (backup frequency), don't forget the whitespace if you are using [CRON](https://en.wikipedia.org/wiki/Cron).
 
 Now a 'backup-_database-name_.yml' file has been created in the following folder : src/main/docker
 
