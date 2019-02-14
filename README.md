@@ -7,6 +7,8 @@
 This is a [JHipster](http://jhipster.github.io/) module, that is meant to be used in a JHipster application. The purpose of this module is to perform periodic backups of your database. This backup docker image currently supports MYSQL, POSTGRESQL, MONGODB and MARIADB.
 The results will be .sql or .targz saves in a backup directory.
 
+You can find a sample application [here](https://github.com/contribution-jhipster-uga/sample-application-database) that already have the yml file for a mySQL database if you to try it out.
+
 # Prerequisites
 
 As this is a [JHipster](http://jhipster.github.io/) module, we expect you have JHipster and its related tools already installed:
